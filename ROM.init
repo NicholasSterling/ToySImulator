@@ -1,0 +1,24 @@
+# Starting at address 0 are 16 exception handlers.  At 0 is the reset handler,
+# next is the interrupt handler, and the rest are undefined for now.
+
+0500 3C00	# 5000 003C	# beq   r0,r0,r0,60;	       ba start
+0500 5800	# 5000 0058	# beq   r0,r0,r0,88;	       ba tick
+
+                      0000 0000  0000 0000 # handlers  2-3     halt ...
+0000 0000  0000 0000  0000 0000  0000 0000 # handlers  4-7     halt ...
+0000 0000  0000 0000  0000 0000  0000 0000 # handlers  8-11    halt ...
+0000 0000  0000 0000  0000 0000  0000 0000 # handlers 12-15    halt ...
+
+2200 00F0	# 2200 F000	# addhi r2,r0,r0,0xf000 start: r2 <- 0xf0000000
+3100 2000	# 1300 0020	# add   r3,r0,r0,32;	       r3 <- 32
+3602 0000	# 6320 0000	# st    r3,r2,r0,0;	       (r2) <- r3
+1100 1000	# 1100 0010	# add   r1,r0,r0,16;	       r1 <- 16
+1301 0100	# 3110 0001	# sub   r1,r1,r0,1;	loop:  r1 <- r1 - 1
+0401 F8FF	# 4010 FFF8	# bne   r0,r1,r0,-8;	       bne r1, loop
+
+0000 0000  0000 0000	#				       halt ...
+
+3602 0000	# 6320 0000	# st    r3,r2,r0,0;	tick:  (r2) <- r3
+0900 0000	# 9000 0000	#                  	       rte
+
+0000 0000  0000 0000	#				       halt ...
