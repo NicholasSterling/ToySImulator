@@ -28,30 +28,33 @@
 
 #define GLOBALS	// allocate storage for globals in this module
 
-#include <iostream.h>
+#include <iostream>
 #include <stdlib.h>
 
-#include "goodies.h"
-#include "simulation.h"
+#include "goodies.hh"
+#include "simulation.hh"
 
-#include "List.h"
-#include "Module.h"
-#include "Interrupt.h"
-#include "Bus.h"
-#include "Cpu.h"
-#include "Memory.h"
-#include "Timer.h"
+#include "List.hh"
+#include "Module.hh"
+#include "Interrupt.hh"
+#include "Bus.hh"
+#include "Cpu.hh"
+#include "Memory.hh"
+#include "Timer.hh"
 
 // Declare the components being simulated.
 Single_master_bus bus;
-Rom		rom(1K, 3, "rom.init");
-Ram		ram(1K, 2, 2);
+Rom		rom(1 K, 3, "rom.init");
+Ram		ram(1 K, 2, 2);
 Bus_tracer	tracer(bus, "from_cpu", "cpu.trc");
 Cpu		cpu(tracer);
 Timer		timer(cpu);
 
 #pragma argsused
 int main(int argc, char** argv) {
+
+	std::cout << all_modules.length() << " modules, " << modules_to_cycle.length() << " to cycle\n";
+	std::cout << std::hex;
 
 	// Connect memory to the bus.
 	bus.add_slave(rom,   PROG, 0xf0000000, 0x00000000); //   rom at 0x0..
@@ -68,17 +71,20 @@ void simulate() {
 
 	// Let all the modules initialize themselves.
 	all_modules.seek();
-	while (module = (Module*) all_modules.get_next())
+	while ((module = (Module*) all_modules.get_next()) != NULL)
 		module->init();
 
 	// Keep cycling until the simulation is over.
+	int cycle_num = 0;
 	while (simulating) {
+		std::cout << "\n===== CYCLE " << cycle_num++ << " =====\n\n";
 		modules_to_cycle.seek();
-		while (module = (Module*) modules_to_cycle.get_next())
+		while ((module = (Module*) modules_to_cycle.get_next()) != NULL) {
 			module->cycle();
+		}
 		cycle++;
 	}
 
 	// We're done; say so.
-	cout << "Simulation complete.\n";
+	std::cout << "Simulation complete.\n";
 }

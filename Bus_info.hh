@@ -3,7 +3,7 @@
  */
 
 typedef unsigned char Asi;      // address space identifier
-typedef unsigned long Address;  // address
+typedef unsigned int Address;   // address on the bus
 typedef unsigned char Byte;     // smallest addressible memory unit
 typedef Byte Word[4];           // memory that can be read/written in one gulp
 typedef enum { OK, FAULT, BUSY, IDLE } Bus_status;  // status of bus access
@@ -14,4 +14,4 @@ struct Bus_info {
 	Address     addr;
 	int         count;
 	Byte *      buff;
-}
+};

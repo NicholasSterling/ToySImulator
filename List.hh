@@ -25,6 +25,7 @@ public:
 	Bool add(void* item, void* item_to_follow = 0);
 	Bool drop(void* item);
 	Bool seek(void* item = 0);
+	int length();
 	void* get_next() {
 		ListEntry* entry = next;
 		if (!entry)

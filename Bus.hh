@@ -32,7 +32,7 @@ enum Access_result {FAULT=-1, OK=0};	// how the access went
 typedef Ulong  Address;		// address
 typedef Uchar  Byte;		// smallest addressible memory unit
 typedef Ushort Half;
-typedef Ulong  Word;
+typedef Uint   Word;
 
 // Information common to all access types.
 struct Access_info {
@@ -70,7 +70,7 @@ public:
 	Bool done(void) {	// returns TRUE when caller may look at status
 		return cycle == when;
 	}
-	friend Bus_tracer;
+	friend class Bus_tracer;
 };
 
 class Bus_master;
@@ -100,12 +100,12 @@ public:
 };
 
 class Bus_tracer : public Bus_slave {
-	char*		label;
-	ostream*	out;
-	Bus_slave*	slave;
-	void trace_status(char*, Access_status&);
+	const char* label;
+	std::ostream* out;
+	Bus_slave* slave;
+	void trace_status(const char*, Access_status&);
 public:
-	Bus_tracer(Bus_slave& slave, char* label = _, char* trace_file = _);
+	Bus_tracer(Bus_slave& slave, const char* label = _, const char* trace_file = _);
 	void read (Read_write_info&, Access_status&);
 	void write(Read_write_info&, Access_status&);
 	void write_part(Write_part_info&, Access_status&);

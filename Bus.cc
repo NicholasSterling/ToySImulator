@@ -2,12 +2,13 @@
  * Bus.c -- Member functions for classes defined in Bus.h.
  */
 
-#include <fstream.h>
-#include "goodies.h"
-#include "List.h"
-#include "simulation.h"
-#include "Module.h"
-#include "Bus.h"
+#include <iostream>
+#include <fstream>
+#include "goodies.hh"
+#include "List.hh"
+#include "simulation.hh"
+#include "Module.hh"
+#include "Bus.hh"
 
 // Values for write_mask.  Index into arrays with low bits of address.
 const Word word_mask = 0xffffffff;
@@ -40,8 +41,7 @@ void Single_master_bus::
 	Decoder* decoder = new Decoder(&slave, asi, mask, match);
 	slaves.add(decoder);
 
-	// To be thorough, we really should check for conflicts with other
-	// slaves; but for now, screw it.
+	// TODO: check for conflicts with other slaves.
 }
 
 /*
@@ -54,7 +54,7 @@ void Single_master_bus::
 void Single_master_bus::read(Read_write_info& info, Access_status& status) {
 	Decoder* decoder;
 	slaves.seek();
-	while (decoder = (Decoder*) slaves.get_next())
+	while ((decoder = (Decoder*) slaves.get_next()) != NULL)
 		if (decoder->is_selected(info)) {
 			decoder->slave->read(info, status);
 			return;
@@ -65,7 +65,7 @@ void Single_master_bus::read(Read_write_info& info, Access_status& status) {
 void Single_master_bus::write(Read_write_info& info, Access_status& status) {
 	Decoder* decoder;
 	slaves.seek();
-	while (decoder = (Decoder*) slaves.get_next())
+	while ((decoder = (Decoder*) slaves.get_next()) != NULL)
 		if (decoder->is_selected(info)) {
 			decoder->slave->write(info, status);
 			return;
@@ -77,7 +77,7 @@ void Single_master_bus::
 		write_part(Write_part_info& info, Access_status& status) {
 	Decoder* decoder;
 	slaves.seek();
-	while (decoder = (Decoder*) slaves.get_next())
+	while ((decoder = (Decoder*) slaves.get_next()) != NULL)
 		if (decoder->is_selected(info)) {
 			decoder->slave->write_part(info, status);
 			return;
@@ -88,46 +88,46 @@ void Single_master_bus::
 /*
  * A Bus_tracer traces bus accesses to a file or stderr.
  */
-Bus_tracer::Bus_tracer(Bus_slave& slave, char* label, char* trace_file) {
+Bus_tracer::Bus_tracer(Bus_slave& slave, const char* label, const char* trace_file) {
 	this->label = label;
 	if (trace_file) {
-		out = new ofstream(trace_file);
+		out = new std::ofstream(trace_file);
 		if (!out)
 			fatal("error creating trace file");
 	} else
-		out = &cerr;
+		out = &std::cerr;
 	this->slave = &slave;
 }
 
 void Bus_tracer::read(Read_write_info& info, Access_status& status) {
 	*out << ::cycle << " - " << label
-		 << " read:  asi="          << info.asi
-		 <<      ", addr=0x" << hex << info.addr
-		 <<     ", count=0x" << dec << info.count << '\n';
+		 << " read:  asi="   << info.asi
+		 <<      ", addr=0x" << info.addr
+		 <<     ", count=0x" << info.count << '\n';
 	slave->read(info, status);
 	trace_status("read", status);
 }
 
 void Bus_tracer::write(Read_write_info& info, Access_status& status) {
 	*out << ::cycle << " - " << label
-		 << " write:  asi="          << info.asi
-		 <<       ", addr=0x" << hex << info.addr
-		 <<      ", count=0x" << dec << info.count << '\n';
+		 << " write:  asi="   << info.asi
+		 <<       ", addr=0x" << info.addr
+		 <<      ", count=0x" << info.count << '\n';
 	slave->write(info, status);
 	trace_status("write", status);
 }
 
 void Bus_tracer::write_part(Write_part_info& info, Access_status& status) {
 	*out << ::cycle << " - " << label
-		 << " write_part: asi="          << info.asi
-		 <<           ", addr=0x" << hex << info.addr
-		 <<           ", word=0x"        << info.word
-		 <<           ", mask=0x"        << info.mask << dec << '\n';
+		 << " write_part: asi="   << info.asi
+		 <<           ", addr=0x" << info.addr
+		 <<           ", word=0x" << info.word
+		 <<           ", mask=0x" << info.mask << '\n';
 	slave->write_part(info, status);
 	trace_status("write_part", status);
 }
 
-void Bus_tracer::trace_status(char* access_type, Access_status& status) {
+void Bus_tracer::trace_status(const char* access_type, Access_status& status) {
 	*out << ::cycle << " - " << label << ' ' << access_type << " status: "
 		 << ((status.result == OK) ? "OK" : "FAULT")
 		 << " at cycle " << status.when << '\n';

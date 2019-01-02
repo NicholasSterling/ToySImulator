@@ -3,13 +3,13 @@
  */
 
 #include <stdlib.h>
-#include <iostream.h>
+#include <iostream>
 #include <stdio.h>
 #include <stdarg.h>
 #include <ctype.h>
-#include "goodies.h"
+#include "goodies.hh"
 
-int get_xdigit(istream&);
+int get_xdigit(std::istream&);
 
 /*
  * find_ms1b() takes a Ulong and returns the index (0..?) of the most
@@ -28,14 +28,14 @@ int find_ms1b(Ulong val) {
  * err() is a printf-like routine for dealing with nonfatal errors.
  * fatal() is the fatal equivalent.
  */
-void err(char* fmt, ...) {
+void err(const char* fmt, ...) {
 	va_list args;
 	va_start(args, fmt);
 	vfprintf(stderr, fmt, args);
 	va_end(args);
 }
 
-void fatal(char* fmt, ...) {
+void fatal(const char* fmt, ...) {
 	va_list args;
 	va_start(args, fmt);
 	vfprintf(stderr, fmt, args);
@@ -48,7 +48,7 @@ void fatal(char* fmt, ...) {
  * contain hexdigits and arbitrary whitespace and comments (# to \n).  A
  * return value of -1 indicates end-of-stream.
  */
-int get_byte(istream& input) {
+int get_byte(std::istream& input) {
 	int	c1,c2;
 	c1 = get_xdigit(input);
 	if (c1 == -1)
@@ -61,7 +61,7 @@ int get_byte(istream& input) {
 	return (c1 << 4) + c2;
 }
 
-int get_xdigit(istream& input) {
+int get_xdigit(std::istream& input) {
 	char	c;
 	Bool	comment = FALSE;
 	for (;;) {

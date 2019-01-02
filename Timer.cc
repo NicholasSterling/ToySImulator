@@ -6,15 +6,15 @@
  * reaches zero.
  */
 
-#include <iostream.h>
-#include "goodies.h"
-#include "List.h"
-#include "simulation.h"
+#include <iostream>
+#include "goodies.hh"
+#include "List.hh"
+#include "simulation.hh"
 
-#include "Module.h"
-#include "Interrupt.h"
-#include "Bus.h"
-#include "Timer.h"
+#include "Module.hh"
+#include "Interrupt.hh"
+#include "Bus.hh"
+#include "Timer.hh"
 
 Timer::Timer(Interruptee& interruptee) {
 	this->interruptee = &interruptee;
@@ -32,8 +32,10 @@ void Timer::read(Read_write_info& info, Access_status& status) {
 
 void Timer::write(Read_write_info& info, Access_status& status) {
 	Word* buff = info.buff;
-	for (int i=info.count; i--; )
+	for (int i=info.count; i--; ) {
 		count = *buff++;
+		std::cout << "Timer set to " << count << "\n";
+	}
 	if (interrupting)
 		interruptee->release_interrupt();
 	interrupting = FALSE;

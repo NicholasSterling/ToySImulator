@@ -14,7 +14,7 @@ class Ram : public Bus_slave {
 	Uint	read_delay, write_delay;
 public:
 	Ram( Ulong size, Uint read_delay = 0, Uint write_delay = 0,
-			char* init_file = 0 );
+			const char* init_file = 0 );
 	virtual void read (Read_write_info& info, Access_status& status);
 	virtual void write(Read_write_info& info, Access_status& status);
 	virtual void write_part(Write_part_info& info, Access_status& status);
@@ -22,7 +22,7 @@ public:
 
 class Rom : public Ram {
 public:
-	Rom(Ulong size, Uint read_delay = 0, char* init_file = 0) :
+	Rom(Ulong size, Uint read_delay = 0, const char* init_file = 0) :
 		 Ram(size, read_delay, 0, init_file) {};
 	virtual void write(Read_write_info& info, Access_status& status);
 	virtual void write_part(Write_part_info& info, Access_status& status);

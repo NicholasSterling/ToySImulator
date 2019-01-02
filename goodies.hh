@@ -33,5 +33,5 @@ typedef unsigned long  Ulong;
 #endif
 
 int find_ms1b(Ulong val);
-void err(  char* fmt, ...);
-void fatal(char* fmt, ...);
+void err(  const char* fmt, ...);
+void fatal(const char* fmt, ...);

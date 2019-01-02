@@ -2,8 +2,8 @@
  * List.c -- definition of the List class.
  */
 
-#include "goodies.h"
-#include "List.h"
+#include "goodies.hh"
+#include "List.hh"
 
 List::~List() {
 	ListEntry*	entry = first;
@@ -16,7 +16,7 @@ List::~List() {
 
 // find_entry() is an internal routine which just returns the first entry
 // pointing to the specified item.
-ListEntry* List::find_entry(void* item) {
+List::ListEntry* List::find_entry(void* item) {
 	ListEntry* entry = first;
 	while (entry) {
 		if (entry->item == item)
@@ -47,6 +47,7 @@ Bool List::add(void* item, void* item_to_follow) {
 	if (!*entry_p)	// if we're adding to the end, fix the "last" ptr
 		last = new_entry;
 	*entry_p = new_entry;
+	return TRUE;
 }
 
 // drop() drops an entry from the list.  Note that if the "next" pointer
@@ -90,4 +91,15 @@ Bool List::seek(void* item) {
 		return FALSE;
 	next = entry;
 	return TRUE;
+}
+
+// length() returns the number of items in the list.
+int List::length() {
+	ListEntry* entry = first;
+	int len = 0;
+	while (entry) {
+		len++;
+		entry = entry->next;
+	}
+	return len;
 }
