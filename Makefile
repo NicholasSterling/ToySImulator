@@ -23,4 +23,4 @@ clean:
 	$(RM) $(OBJS)
 
 distclean: clean
-	$(RM) simulation
+	$(RM) simulation cpu.trc
